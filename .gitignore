@@ -1,0 +1,12 @@
+# Gizli config dosyaları
+appsettings.Development.json
+appsettings.Production.json
+
+# VS / .NET klasörleri
+bin/
+obj/
+.vs/
+
+# Diğer gereksiz şeyler
+*.user
+*.log
