@@ -40,8 +40,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
+builder.Services.AddHttpContextAccessor(); //CurrentUser için
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ICurrentUserService,CurrentUserService>();
 builder.Services.AddScoped<IAuthService,AuthService>();
+
+builder.Services.AddScoped<IArticleRepository,ArticleRepository>();
+builder.Services.AddScoped<IArticleService, ArticleService>();
+
+builder.Services.AddScoped<ILikeRepository, LikeRepository>();
+builder.Services.AddScoped<ILikeService,LikeService>();
+
 
 
 var app = builder.Build();

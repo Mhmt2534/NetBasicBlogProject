@@ -1,5 +1,6 @@
 ﻿using Application.Interfaces.Repositories;
 using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using Persistence.Context;
 using System;
 using System.Collections.Generic;
@@ -9,12 +10,17 @@ using System.Threading.Tasks;
 
 namespace Persistence.Repositories
 {
-    public class ArticleRepository : GenericRepository<Article>, IArticleRepository
+    public class LikeRepository : GenericRepository<Like>, ILikeRepository
     {
         private readonly BlogDbContext _dbContext;
-        public ArticleRepository(BlogDbContext dbContext) : base(dbContext) 
-        { 
+        public LikeRepository(BlogDbContext dbContext) : base(dbContext)
+        {
             _dbContext = dbContext;
+        }
+
+        public async Task<int> getLikeCount(Guid articleId)
+        {
+            return await _dbContext.Likes.CountAsync(l =>l.ArticleId ==articleId);
         }
     }
 }
