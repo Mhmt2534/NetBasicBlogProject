@@ -10,5 +10,9 @@ namespace Application.Interfaces.Repositories
     public interface ILikeRepository : IGenericRepository<Like>
     {
         Task<int> getLikeCount(Guid articleId);
+        public  Task<bool> likeIsExist(Guid articleId, Guid UserId);
+        public  Task<Like> getLikeByIds(Guid articleId, Guid UserId);
+        public Task reverseLike(Like like);
+
     }
 }

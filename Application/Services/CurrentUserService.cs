@@ -31,7 +31,14 @@ namespace Application.Services
 
         public string GetCurrentUserName()
         {
-            throw new NotImplementedException();
+            var user = _httpContextAccessor.HttpContext?.User ??
+               throw new UnauthorizedAccessException("User not found in HttpContext");
+
+
+            var userNameClaim = user.FindFirst(ClaimTypes.Name)?.Value ??
+                throw new UnauthorizedAccessException("User Name claim not found.");
+
+            return userNameClaim;
         }
 
         public bool IsAuthenticated()

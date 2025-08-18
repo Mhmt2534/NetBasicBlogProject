@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class Like:BaseEntity
+    public class Like
     {
         public Guid UserId { get; set; }
         public User User { get; set; }
@@ -15,6 +15,10 @@ namespace Domain.Entities
 
         public Guid ArticleId { get; set; }
         public Article Article { get; set; }
+
+        public DateTime CreatedTime { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdatedTime { get; set; }
+        public bool IsDelete { get; set; }
 
     }
 }

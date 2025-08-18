@@ -22,5 +22,23 @@ namespace Persistence.Repositories
         {
             return await _dbContext.Likes.CountAsync(l =>l.ArticleId ==articleId);
         }
+
+        public async Task<bool> likeIsExist(Guid articleId, Guid UserId)
+        {
+            return await _dbContext.Likes.AnyAsync(l => l.ArticleId == articleId && l.UserId == UserId);
+        }
+
+        public async Task<Like> getLikeByIds(Guid articleId, Guid UserId)
+        {
+            return await _dbContext.Likes.FirstOrDefaultAsync(l => l.ArticleId == articleId && l.UserId == UserId);
+        }
+
+        public async Task reverseLike(Like like)
+        {
+            like.UpdatedTime =  DateTime.UtcNow;
+            like.IsDelete = !like.IsDelete;
+            UpdateAsync(like);
+        }
+
     }
 }
