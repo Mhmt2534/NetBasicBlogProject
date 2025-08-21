@@ -23,9 +23,9 @@ namespace Application.Services
 
         public async Task<SuccessResult> AddAsync(Like like)
         {
-            Guid currenUser = _currentUserService.GetCurrentUserId(); //mevcut kullanıcıyı çekiyoruz.
+            Guid currentUser = _currentUserService.GetCurrentUserId(); //mevcut kullanıcıyı çekiyoruz.
 
-            bool isExist = await _likeRepository.likeIsExist(like.ArticleId,currenUser);
+            bool isExist = await _likeRepository.likeIsExist(like.ArticleId,currentUser);
 
 
             //Eğer daha önce like yoksa
@@ -34,10 +34,10 @@ namespace Application.Services
                 return new SuccessResult("Like atıldı");
             }
 
-            var updatedLike = await _likeRepository.getLikeByIds(like.ArticleId, currenUser);
+            var updatedLike = await _likeRepository.getLikeByIds(like.ArticleId, currentUser);
 
             //eğer like varsa ama geri alınırsa veya alınmışsa
-            await _likeRepository.reverseLike(updatedLike);
+            await _likeRepository.reverseLike(updatedLike); //Tracking mekanizmasına bak. Burda yukarıkdai updatedLike da değişiyor
             return new SuccessResult(
                 updatedLike.IsDelete ?
                  "Like geri çekildi." :

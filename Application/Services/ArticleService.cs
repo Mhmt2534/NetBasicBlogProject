@@ -2,6 +2,7 @@
 using Application.Interfaces.Repositories;
 using Application.Interfaces.Serivces;
 using Domain.Entities;
+using Domain.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,24 +45,76 @@ namespace Application.Services
             return articleResponse;
         }
 
-        public Task<ArticleResponseDto> DeleteAsync(Guid id)
+        public async Task<DataResult<ArticleResponseDto>> DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var currentUserId = _currentUserService.GetCurrentUserId();
+
+            Article article = await _articleRepository.GetByIdAsync(id);
+
+            if (article is null)
+                return new ErrorDataResult<ArticleResponseDto>("Makale bulunamadı");
+
+            if (article.AuthorId != currentUserId)
+                return new ErrorDataResult<ArticleResponseDto>("Böyle bir yetkiniz yok");
+
+            Article newArticle = await _articleRepository.DeleteAsync(id);
+            ArticleResponseDto articleResponseDto = new ArticleResponseDto()
+            {
+                Id = newArticle.Id,
+                Content = newArticle.Content,
+                Header = newArticle.Header
+            };
+
+
+            return new SuccessDataResult<ArticleResponseDto>(articleResponseDto, "Makale silindi");
         }
 
-        public Task<IEnumerable<ArticleResponseDto>> GetAllAsync()
+        public async Task<IEnumerable<ArticleResponseDto>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            IEnumerable<ArticleResponseDto> articleResponseDto;
+            articleResponseDto= await _articleRepository.GetArticlesByLikeCount();
+            return articleResponseDto;
         }
+
+        public async Task<IEnumerable<ArticleResponseDto>> GetAllForUserAsync()
+        {
+            IEnumerable<ArticleResponseDto> articleResponseDto;
+            Guid authorId = _currentUserService.GetCurrentUserId();
+            articleResponseDto = await _articleRepository.GetArticlesForUsers(authorId);
+            return articleResponseDto;
+        }
+
 
         public Task<ArticleResponseDto?> GetByIdAsync(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<ArticleResponseDto> UpdateAsync(ArticleRequestDto article)
+        public async Task<DataResult<ArticleResponseDto>> UpdateAsync(ArticleRequestDto articleRequest)
         {
-            throw new NotImplementedException();
+            var currentUserId = _currentUserService.GetCurrentUserId();
+
+            Article article = await _articleRepository.GetByIdAsync(articleRequest.Id);
+
+            if (article is null) 
+                    return new ErrorDataResult<ArticleResponseDto>("Makale bulunamadı");
+
+            if (article.AuthorId != currentUserId)
+                return new ErrorDataResult<ArticleResponseDto>("Böyle bir yetkiniz yok");
+
+            article.Header=articleRequest.Header;
+            article.Content=articleRequest.Content;
+
+            Article newArticle = await _articleRepository.UpdateAsync(article);
+            ArticleResponseDto articleResponseDto = new ArticleResponseDto()
+            {
+                Id = newArticle.Id,
+                Content = newArticle.Content,
+                Header = newArticle.Header
+            };
+
+
+            return new SuccessDataResult<ArticleResponseDto>(articleResponseDto,"Makale güncellendi");
         }
     }
 }

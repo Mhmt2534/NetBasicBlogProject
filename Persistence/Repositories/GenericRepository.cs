@@ -1,4 +1,5 @@
 ﻿using Application.Interfaces.Repositories;
+using Domain.Common;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Context;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Persistence.Repositories
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : class
+    public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
     {
         private readonly BlogDbContext _dbContext;
         private DbSet<T> _dbSet; 
@@ -31,7 +32,8 @@ namespace Persistence.Repositories
         public async Task<T> DeleteAsync(Guid id)
         {
             var entity = await _dbSet.FindAsync(id);
-            _dbSet.Remove(entity);
+            entity.IsDelete = true;
+            entity.UpdatedTime = DateTime.UtcNow;
             await _dbContext.SaveChangesAsync();
             return entity;
         }

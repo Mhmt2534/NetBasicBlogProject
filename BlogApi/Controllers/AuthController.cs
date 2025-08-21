@@ -56,6 +56,9 @@ namespace BlogApi.Controllers
         }
 
 
+
+
+
         [Authorize]
         [HttpGet("authorize-test")]
         public IActionResult AuthroizeTest() => Ok("Giriş yapılmış");

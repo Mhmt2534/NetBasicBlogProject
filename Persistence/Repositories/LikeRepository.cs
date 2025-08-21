@@ -10,12 +10,19 @@ using System.Threading.Tasks;
 
 namespace Persistence.Repositories
 {
-    public class LikeRepository : GenericRepository<Like>, ILikeRepository
+    public class LikeRepository :  ILikeRepository
     {
         private readonly BlogDbContext _dbContext;
-        public LikeRepository(BlogDbContext dbContext) : base(dbContext)
+        public LikeRepository(BlogDbContext dbContext) 
         {
             _dbContext = dbContext;
+        }
+
+        public async Task<Like> AddAsync(Like like)
+        {
+            await _dbContext.Likes.AddAsync(like);
+            await _dbContext.SaveChangesAsync();
+            return like;
         }
 
         public async Task<int> getLikeCount(Guid articleId)
@@ -37,7 +44,7 @@ namespace Persistence.Repositories
         {
             like.UpdatedTime =  DateTime.UtcNow;
             like.IsDelete = !like.IsDelete;
-            UpdateAsync(like);
+            await _dbContext.SaveChangesAsync();
         }
 
     }
